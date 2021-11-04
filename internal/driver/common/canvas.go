@@ -67,6 +67,8 @@ func (c *Canvas) EnsureMinSize() bool {
 	}
 	var lastParent fyne.CanvasObject
 
+	seenObj := map[fyne.CanvasObject]bool{}
+
 	windowNeedsMinSizeUpdate := false
 	csize := c.impl.Size()
 	min := c.impl.MinSize()
@@ -95,8 +97,9 @@ func (c *Canvas) EnsureMinSize() bool {
 				}
 			}
 
-			if objToLayout != lastParent {
-				updateLayout(lastParent)
+			if !seenObj[objToLayout] {
+				updateLayout(objToLayout)
+				seenObj[objToLayout] = true
 				lastParent = objToLayout
 			}
 		}
@@ -115,6 +118,7 @@ func (c *Canvas) EnsureMinSize() bool {
 	}
 	return windowNeedsMinSizeUpdate
 }
+
 
 // Focus makes the provided item focused.
 func (c *Canvas) Focus(obj fyne.Focusable) {
